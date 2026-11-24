@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MQCMS – Manufacturing Quality Control Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--navy:#0f2a47;--navy2:#1a3d63;--steel:#5b6b7c;--line:#d5dde6;--bg:#f2f5f9;--lb:#e3eff9;--blue:#3b82b8;--or:#e8742a;--ok:#1f8a5b}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1c2733}
+aside{position:fixed;inset:0 auto 0 0;width:236px;background:var(--navy);color:#cfdbe8;display:flex;flex-direction:column;z-index:20;transition:transform .2s;overflow:auto}
+aside h1{font-size:17px;margin:0;padding:18px 18px 2px;color:#fff;letter-spacing:.5px}aside small{padding:0 18px 14px;color:#8fa6bf;display:block;border-bottom:1px solid #264a73}
+aside nav a{display:block;padding:10px 18px;color:#cfdbe8;text-decoration:none;border-left:3px solid transparent}
+aside nav a:hover{background:var(--navy2)}aside nav a.on{background:var(--navy2);border-left-color:var(--or);color:#fff;font-weight:600}
+.sim{margin:auto 12px 12px;padding:10px;font-size:11.5px;background:#173a5e;border-radius:4px;color:#b9cbe0}
+.top{display:none;position:sticky;top:0;background:var(--navy);color:#fff;padding:10px 14px;z-index:10;align-items:center;gap:10px}
+.top button{background:none;border:0;color:#fff;font-size:22px}
+main{margin-left:236px;padding:22px 26px 40px;max-width:1500px}
+.hd h2{margin:0;color:var(--navy);font-size:22px}.hd p{margin:2px 0 14px;color:var(--steel)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:#fff;border:1px solid var(--line);border-radius:4px;padding:14px 16px}
+.kpi b{display:block;font-size:24px;color:var(--navy);font-weight:600}.kpi span{color:var(--steel);font-size:12.5px}.kpi.w{border-left:4px solid var(--or)}.kpi.l{border-left:4px solid var(--blue)}
+.card h3{margin:0 0 8px;font-size:14.5px;color:var(--navy)}.cv{position:relative;height:260px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}.sp{flex:1}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid #b9c5d2;border-radius:3px;background:#fff;max-width:100%}
+textarea{width:100%;min-height:64px}
+button{font:inherit;padding:7px 13px;border:1px solid #b9c5d2;background:#fff;color:var(--navy);border-radius:3px;cursor:pointer}
+button:hover{background:var(--lb)}button.pri{background:var(--navy);color:#fff;border-color:var(--navy)}button.pri:hover{background:var(--navy2)}
+button.dng{color:#b4381f}button.sm{padding:3px 9px;font-size:12.5px}
+:focus-visible{outline:2px solid var(--or);outline-offset:1px}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:4px;margin-bottom:16px}
+table{border-collapse:collapse;width:100%;min-width:560px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #e6ecf2;white-space:nowrap}
+td.t{white-space:normal;min-width:160px;max-width:300px}th{background:var(--lb);color:var(--navy);font-weight:600;position:sticky;top:0}tfoot td{font-weight:600;background:#f7f9fb}
+.b{padding:2px 8px;border-radius:10px;font-size:12px;background:#e8edf2;color:#44546a}.b.ok{background:#dcf1e7;color:var(--ok)}.b.bad{background:#fbe4d5;color:#b9500f}.b.mid{background:var(--lb);color:#245f8f}
+dialog{border:0;border-radius:6px;padding:20px;width:min(560px,94vw);box-shadow:0 10px 40px #0005}dialog::backdrop{background:#0f2a4799}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fg label{display:block;font-size:12.5px;color:var(--steel)}.fg .full{grid-column:1/-1}.fg input,.fg select{width:100%}
+.err{color:#b4381f;margin:8px 0;min-height:18px}
+.fish{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.fish h4{margin:0 0 4px;color:var(--or)}
+.eff{background:var(--navy);color:#fff;padding:10px 14px;border-radius:4px;margin-bottom:10px}
+.mut{color:var(--steel)}.warn{background:#fdf0e6;border-left:4px solid var(--or);padding:10px 14px;margin-bottom:14px;font-size:13px}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:4px;z-index:50}
+.rep h3{border-bottom:2px solid var(--or);padding-bottom:3px;margin-top:22px;color:var(--navy)}.rep ul{margin:4px 0}
+@media(max-width:820px){aside{transform:translateX(-100%)}aside.open{transform:none}.top{display:flex}main{margin:0;padding:14px}.fg{grid-template-columns:1fr}}
+@media print{aside,.top,.noprint,.toast{display:none!important}main{margin:0;padding:0}body{background:#fff}.card,.tw{break-inside:avoid}}
+</style></head><body>
+<div class="top noprint"><button id="burger" aria-label="Menu">☰</button><b>MQCMS</b></div>
+<aside id="side"><h1>MQCMS</h1><small>Production Monitoring, Quality Inspection &amp; Defect Analysis</small><nav id="nav"></nav>
+<div class="sim"><b>Simulated data.</b> Independent educational simulation – not an official company QC system.</div></aside>
+<main><div id="view"></div></main><div id="toast" class="toast" hidden></div>
+<dialog id="dlg"></dialog><input type="file" id="file" accept=".csv" hidden>
+<script>
+const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const N=v=>+v||0,pct=(a,b)=>b?a/b*100:0,f1=v=>v.toFixed(1)+'%',nf=v=>Math.round(v).toLocaleString('en-US');
+const KEY='mqcms_v1',TODAY=new Date().toISOString().slice(0,10);
+const O={cat:['Automotive Parts','Electronics','Packaging','Consumer Goods'],ps:['Planned','In Progress','Completed','On Hold'],ic:['Visual Inspection','Dimensional Inspection','Functional Inspection','Packaging Inspection','Final Inspection'],res:['Pass','Fail','Conditional'],dt:['Surface Defect','Scratches','Dimensional Deviation','Assembly Error','Missing Components','Packaging Defect','Functional Failure'],sev:['Minor','Major','Critical'],cs:['Open','In Progress','Completed','Verified'],pf:['Pending','Pass','Fail'],dep:['Production','Quality Assurance','Maintenance','Engineering','Warehouse']};
+const T=(k,l,x={})=>({k,l,t:'text',...x}),D=(k,l,x={})=>({k,l,t:'date',req:1,...x}),Q=(k,l,x={})=>({k,l,t:'number',sum:1,req:1,...x}),S=(k,l,o,x={})=>({k,l,t:'select',o,req:1,b:1,...x}),A=(k,l,x={})=>({k,l,t:'area',...x});
+const M={
+prod:{t:'Production Management',d:'Daily production records with automatic totals.',pre:'PRD',flt:['batch','category','status'],
+cols:[T('id','Production ID',{ro:1}),D('date','Date'),T('batch','Batch Number',{req:1,dl:'batch'}),T('product','Product Name',{req:1,dl:'product'}),S('category','Category',O.cat,{b:0}),Q('target','Target Qty'),Q('actual','Actual Production'),Q('inspected','Inspected Qty'),Q('accepted','Accepted Qty'),Q('rejected','Rejected Qty'),S('status','Production Status',O.ps)],
+val:r=>r.inspected>r.actual?'Inspected quantity cannot exceed actual production.':r.accepted+r.rejected!==r.inspected?'Accepted + Rejected must equal Inspected quantity.':''},
+insp:{t:'Quality Inspection',d:'Inspection records by category and inspector.',pre:'INS',flt:['category','result'],
+cols:[T('id','Inspection ID',{ro:1}),D('date','Date'),T('product','Product Name',{req:1,dl:'product'}),T('batch','Batch Number',{req:1,dl:'batch'}),T('inspector','Inspector Name',{req:1}),S('category','Inspection Category',O.ic,{b:0}),S('result','Inspection Result',O.res),A('notes','Notes',{full:1})]},
+def:{t:'Defect Tracking',d:'Defect classification, severity and batch tracking.',pre:'DEF',flt:['batch','type','severity'],
+cols:[T('id','Defect ID',{ro:1}),D('date','Date'),T('batch','Batch Number',{req:1,dl:'batch'}),S('type','Defect Category',O.dt,{b:0}),S('severity','Severity',O.sev),Q('qty','Defect Qty',{min:1}),A('notes','Notes',{full:1})],extra:'defExtra'},
+chk:{t:'QC Inspection Checklist',d:'Record each inspection item against its quality standard.',pre:'CHK',flt:['status'],btn:['tpl','Add standard checklist'],
+cols:[T('id','Checklist ID',{ro:1}),D('date','Inspection Date'),T('item','Inspection Item',{req:1}),T('standard','Quality Standard',{req:1,tx:1}),T('obs','Actual Observation',{req:1,tx:1}),S('status','Pass / Fail',O.pf),A('notes','Inspector Notes',{full:1,tx:1})]},
+capa:{t:'Corrective & Preventive Action (CAPA)',d:'Track root causes, actions and verification.',pre:'CAPA',flt:['status','dept'],
+cols:[T('id','CAPA ID',{ro:1}),A('problem','Problem Description',{req:1,tx:1,full:1}),A('root','Root Cause',{req:1,tx:1,full:1}),A('corr','Corrective Action',{req:1,tx:1,full:1}),A('prev','Preventive Action',{req:1,tx:1,full:1}),S('dept','Responsible Department',O.dep,{b:0}),D('due','Due Date'),S('status','Status',O.cs),A('verify','Verification Notes',{full:1,tx:1})]}};
+const MK=Object.keys(M);
+function seed(){let s=11;const R=()=>(s=s*16807%2147483647)/2147483647;
+const P=[['Brake Pad Set','Automotive Parts',400],['Control Circuit Board','Electronics',600],['Sealed Carton Pack','Packaging',800],['Plastic Housing Unit','Consumer Goods',500]],W=[30,22,16,12,8,7,5],INS=['A. Pratama','R. Wijaya','S. Lestari'];
+const d={prod:[],insp:[],def:[],chk:[],capa:[]};let n=0;
+for(let i=0;i<10;i++)for(let j=0;j<2;j++){const p=P[(i+j*2)%4],dt=new Date(Date.UTC(2026,10,9+i)).toISOString().slice(0,10),tg=p[2],ac=Math.round(tg*(.88+R()*.14)),ins=Math.round(ac*(.85+R()*.15)),rj=Math.round(ins*(.02+R()*.05));n++;
+d.prod.push({id:'PRD-'+String(n).padStart(3,'0'),date:dt,batch:'B-2611-0'+(1+Math.floor(i/5)),product:p[0],category:p[1],target:tg,actual:ac,inspected:ins,accepted:ins-rj,rejected:rj,status:i==9&&j==1?'In Progress':'Completed'});
+let tot=Math.round(rj*1.15),pick=()=>{let x=R()*100,c=0;for(let k=0;k<7;k++){c+=W[k];if(x<c)return k}return 0};
+if(tot>0){const a=pick(),b=pick(),q1=Math.ceil(tot*.6);[[a,q1],[b,tot-q1]].forEach(([k,q])=>{if(q>0)d.def.push({id:'DEF-'+String(d.def.length+1).padStart(3,'0'),date:dt,batch:'B-2611-0'+(1+Math.floor(i/5)),type:O.dt[k],severity:k>=4?(k==6?'Critical':'Major'):(R()<.3?'Major':'Minor'),qty:q,notes:'Found during '+p[0]+' inspection.'})})}}
+d.prod.filter((_,i)=>i%2==0).forEach((r,i)=>{const bad=pct(r.rejected,r.inspected);d.insp.push({id:'INS-'+String(i+1).padStart(3,'0'),date:r.date,product:r.product,batch:r.batch,inspector:INS[i%3],category:O.ic[i%5],result:bad>5.5?'Fail':bad>4?'Conditional':'Pass',notes:'Sample inspection – '+f1(bad)+' reject rate.'})});
+[['Surface finish','No visible stains or marks','Light stain on 2 of 20 samples','Fail'],['Dimension check','Length 120 ±0.5 mm','120.2 mm','Pass'],['Label placement','Centered, ±2 mm','Aligned','Pass'],['Functional test','Powers on within 3 s','2.1 s','Pass'],['Packaging seal','Seal fully closed','1 carton open at corner','Fail'],['Component count','All 12 parts present','12 parts','Pass'],['Torque check','8–10 Nm','9.1 Nm','Pass'],['Weight check','500 g ±5 g','498 g','Pass']].forEach((c,i)=>d.chk.push({id:'CHK-'+String(i+1).padStart(3,'0'),date:'2026-11-18',item:c[0],standard:c[1],obs:c[2],status:c[3],notes:c[3]=='Fail'?'Isolate affected lot and notify supervisor.':''}));
+d.capa=[{id:'CAPA-001',problem:'Surface defects are the largest contributor to rejected units.',root:'Worn polishing pads and inconsistent cleaning between shifts.',corr:'Replace polishing pads; re-inspect affected lots.',prev:'Add pad-life counter and shift cleaning checklist.',dept:'Maintenance',due:'2026-12-05',status:'In Progress',verify:''},{id:'CAPA-002',problem:'Scratches found after handling between stations.',root:'Parts contact metal trays without protective liners.',corr:'Install foam liners on all trays.',prev:'Handling instruction and quarterly tray audit.',dept:'Production',due:'2026-11-30',status:'Completed',verify:'Pending verification by QA.'},{id:'CAPA-003',problem:'Dimensional deviation in Batch B-2611-02.',root:'Gauge calibration overdue by 2 weeks.',corr:'Calibrate all gauges.',prev:'Calibration reminder in maintenance schedule.',dept:'Quality Assurance',due:'2026-11-20',status:'Verified',verify:'Calibration certificates checked on 2026-11-22.'},{id:'CAPA-004',problem:'Carton seals open on packaging line.',root:'Sealing temperature drifting.',corr:'Adjust and re-validate the sealer.',prev:'Hourly temperature log.',dept:'Engineering',due:'2026-12-12',status:'Open',verify:''}];
+d.an={fish:{Man:'Operators skip cleaning step on night shift',Machine:'Polishing pads worn; sealer temperature drifts',Method:'No written handling instruction between stations',Material:'Supplier resin lots vary in surface quality',Measurement:'Gauge calibration overdue',Environment:'Dust and humidity in finishing area'},prob:'Surface defects are the top defect category',why:['Many units show visible surface marks.','Marks appear after finishing.','Polishing is uneven.','Pads are worn beyond limit.','No pad-life tracking exists.'],concl:'Root cause: no pad-life control in the maintenance plan.'};
+return d}
+let DB;try{DB=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!DB||!DB.prod)DB=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Storage unavailable')}};
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600)}
+function dl(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+text],{type:'text/csv'}));a.download=name;a.click()}
+const csvc=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const toCSV=m=>[M[m].cols.map(c=>csvc(c.l)).join(',')].concat(DB[m].map(r=>M[m].cols.map(c=>csvc(r[c.k])).join(','))).join('\r\n');
+function parseCSV(t){const r=[];let w=[],c='',q=0;t=t.replace(/^\uFEFF/,'');for(let i=0;i<t.length;i++){const h=t[i];if(q){if(h=='"'){if(t[i+1]=='"'){c+='"';i++}else q=0}else c+=h}else if(h=='"')q=1;else if(h==','){w.push(c);c=''}else if(h=='\n'||h=='\r'){if(h=='\r'&&t[i+1]=='\n')i++;w.push(c);r.push(w);w=[];c=''}else c+=h}if(c||w.length){w.push(c);r.push(w)}return r.filter(x=>x.some(y=>y.trim()))}
+const nextId=m=>M[m].pre+'-'+String(DB[m].reduce((a,r)=>Math.max(a,N(String(r.id).split('-').pop())),0)+1).padStart(3,'0');
+const uniq=(m,k)=>[...new Set(DB[m].map(r=>r[k]).filter(Boolean))].sort();
+function check(m,r){for(const c of M[m].cols){if(c.req&&(r[c.k]===''||r[c.k]==null))return c.l+' is required.';if(c.t=='number'&&(isNaN(r[c.k])||r[c.k]<(c.min||0)))return c.l+' must be a number ≥ '+(c.min||0)+'.'}return M[m].val?M[m].val(r):''}
+function bcls(v){return /^(Pass|Completed|Verified)$/.test(v)?'ok':/^(Fail|Critical|Open|On Hold)$/.test(v)?'bad':/^(Major|Conditional|In Progress|Pending)$/.test(v)?'mid':''}
+/* ---------- analytics ---------- */
+function K(rows=DB.prod,defs=DB.def){const s=k=>rows.reduce((a,r)=>a+N(r[k]),0),t={target:s('target'),actual:s('actual'),insp:s('inspected'),acc:s('accepted'),rej:s('rejected'),def:defs.reduce((a,r)=>a+N(r.qty),0)};
+t.dr=pct(t.def,t.insp);t.rr=pct(t.rej,t.insp);t.fpy=pct(t.acc,t.insp);t.cov=pct(t.insp,t.actual);t.ach=pct(t.actual,t.target);return t}
+const by=(rows,kf,vf)=>{const o={};rows.forEach(r=>o[kf(r)]=(o[kf(r)]||0)+vf(r));return o};
+function pareto(){const o=by(DB.def,r=>r.type,r=>N(r.qty)),tot=Object.values(o).reduce((a,b)=>a+b,0);let c=0;return Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({k,v,p:pct(v,tot),c:(c+=pct(v,tot))}))}
+const CH={};function chart(id,cfg){const e=$('#'+id);if(!e)return;if(!window.Chart){e.parentNode.innerHTML='<p class="mut">Chart.js could not load (internet connection needed for charts).</p>';return}CH[id]&&CH[id].destroy();cfg.options={maintainAspectRatio:false,...cfg.options};CH[id]=new Chart(e,cfg)}
+const C=['#0f2a47','#3b82b8','#e8742a','#5b6b7c','#8dbbe0','#f2a56b','#2c5d8f'];
+const dates=()=>[...new Set(DB.prod.map(r=>r.date))].sort();
+/* ---------- pages ---------- */
+const kpi=(l,v,s='',c='')=>`<div class="card kpi ${c}"><b>${v}</b><span>${l}${s?'<br>'+s:''}</span></div>`;
+function dash(){const k=K();$('#view').innerHTML=`<div class=hd><h2>Quality Dashboard</h2><p>All figures are calculated from the stored simulated dataset.</p></div>
+<div class=warn>Simulated data created for educational and portfolio demonstration. Not actual company records.</div>
+<div class=grid>${kpi('Total Production',nf(k.actual),'units')}${kpi('Inspected Products',nf(k.insp),'units')}${kpi('Accepted Products',nf(k.acc),'units','l')}${kpi('Rejected Products',nf(k.rej),'units','w')}${kpi('Defect Rate',f1(k.dr),'defects ÷ inspected','w')}${kpi('Production Achievement',f1(k.ach),'actual ÷ target','l')}</div>
+<div class="grid g2"><div class=card><h3>Daily Production (Target vs Actual)</h3><div class=cv><canvas id=c1></canvas></div></div><div class=card><h3>Defect Distribution</h3><div class=cv><canvas id=c2></canvas></div></div></div>
+<div class=card><h3>Quality Performance Trend</h3><div class=cv><canvas id=c3></canvas></div></div>`;
+const d=dates(),g=f=>d.map(x=>DB.prod.filter(r=>r.date==x).reduce((a,r)=>a+N(r[f]),0)),p=pareto();
+chart('c1',{type:'bar',data:{labels:d.map(x=>x.slice(5)),datasets:[{label:'Target',data:g('target'),backgroundColor:'#b9c5d2'},{label:'Actual',data:g('actual'),backgroundColor:'#0f2a47'}]}});
+chart('c2',{type:'doughnut',data:{labels:p.map(x=>x.k),datasets:[{data:p.map(x=>x.v),backgroundColor:C}]},options:{plugins:{legend:{position:'right'}}}});
+const ins=g('inspected'),rj=g('rejected'),ac=g('accepted');
+chart('c3',{type:'line',data:{labels:d.map(x=>x.slice(5)),datasets:[{label:'First Pass Yield %',data:ins.map((v,i)=>+pct(ac[i],v).toFixed(2)),borderColor:'#3b82b8',tension:.3},{label:'Rejection Rate %',data:ins.map((v,i)=>+pct(rj[i],v).toFixed(2)),borderColor:'#e8742a',tension:.3}]}})}
+const F={};
+function draw(m){const X=M[m],hasD=X.cols.some(c=>c.k=='date');F[m]=F[m]||{q:'',a:'',b:'',s:{}};const f=F[m];
+$('#view').innerHTML=`<div class=hd><h2>${X.t}</h2><p>${X.d}</p></div><div class="bar noprint"><input id=q placeholder="Search…" value="${esc(f.q)}">${hasD?`<input type=date id=da title="From date" value="${f.a}"><input type=date id=dbb title="To date" value="${f.b}">`:''}${X.flt.map(k=>`<select data-f=${k}><option value="">All ${X.cols.find(c=>c.k==k).l}</option>${uniq(m,k).map(v=>`<option ${f.s[k]==v?'selected':''}>${esc(v)}</option>`).join('')}</select>`).join('')}<span class=sp></span>${X.btn?`<button id=xb>${X.btn[1]}</button>`:''}<button id=imp>Import CSV</button><button id=exp>Export CSV</button><button class=pri id=add>+ Add record</button></div>
+<div class=tw><table><thead><tr>${X.cols.map(c=>`<th>${c.l}</th>`).join('')}<th class=noprint>Actions</th></tr></thead><tbody id=tb></tbody><tfoot id=tf></tfoot></table></div><div id=ex></div>`;
+$('#q').oninput=e=>{f.q=e.target.value;fill(m)};if(hasD){$('#da').onchange=e=>{f.a=e.target.value;fill(m)};$('#dbb').onchange=e=>{f.b=e.target.value;fill(m)}}
+$$('select[data-f]').forEach(s=>s.onchange=e=>{f.s[s.dataset.f]=s.value;fill(m)});
+$('#add').onclick=()=>form(m);$('#exp').onclick=()=>{dl(m+'.csv',toCSV(m));toast('CSV exported')};$('#imp').onclick=()=>{$('#file').dataset.m=m;$('#file').click()};
+if(X.btn)$('#xb').onclick=()=>{['Visual appearance','Dimensions','Labeling','Function test','Packaging','Documentation'].forEach(i=>DB.chk.push({id:nextId('chk'),date:TODAY,item:i,standard:'Per work instruction',obs:'',status:'Pending',notes:''}));save();draw(m);toast('Standard checklist added')};
+$('#tb').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.e)form(m,b.dataset.e);if(b.dataset.d&&confirm('Delete record '+b.dataset.d+'? This cannot be undone.')){DB[m]=DB[m].filter(r=>r.id!=b.dataset.d);save();draw(m);toast('Record deleted')}};
+fill(m);if(X.extra)window[X.extra]()}
+function fill(m){const X=M[m],f=F[m];const rows=DB[m].filter(r=>(!f.q||JSON.stringify(Object.values(r)).toLowerCase().includes(f.q.toLowerCase()))&&(!f.a||r.date>=f.a)&&(!f.b||r.date<=f.b)&&Object.entries(f.s).every(([k,v])=>!v||r[k]==v)).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.id.localeCompare(a.id));
+$('#tb').innerHTML=rows.length?rows.map(r=>`<tr>${X.cols.map(c=>`<td class="${c.tx?'t':''}">${c.b?`<span class="b ${bcls(r[c.k])}">${esc(r[c.k])}</span>`:esc(r[c.k])}</td>`).join('')}<td class=noprint><button class=sm data-e="${r.id}">Edit</button> <button class="sm dng" data-d="${r.id}">Delete</button></td></tr>`).join(''):`<tr><td colspan=${X.cols.length+1} class=mut>No records match. Adjust the filters or add a record.</td></tr>`;
+$('#tf').innerHTML=X.cols.some(c=>c.sum)&&rows.length?`<tr>${X.cols.map((c,i)=>`<td>${c.sum?nf(rows.reduce((a,r)=>a+N(r[c.k]),0)):i==0?'Totals ('+rows.length+')':''}</td>`).join('')}<td class=noprint></td></tr>`:''}
+function form(m,id){const X=M[m],row=id?DB[m].find(r=>r.id==id):{id:nextId(m),date:TODAY};const dls=`<datalist id=dl-batch>${uniq('prod','batch').map(v=>`<option>${esc(v)}`).join('')}</datalist><datalist id=dl-product>${uniq('prod','product').map(v=>`<option>${esc(v)}`).join('')}</datalist>`;
+$('#dlg').innerHTML=`<form id=fm><h3>${id?'Edit':'Add'} – ${X.t}</h3><div class=fg>${X.cols.map(c=>{const v=row[c.k]??'';const inp=c.t=='select'?`<select name=${c.k}>${c.o.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`:c.t=='area'?`<textarea name=${c.k}>${esc(v)}</textarea>`:`<input name=${c.k} type=${c.t=='number'?'number':c.t=='date'?'date':'text'} value="${esc(v)}" ${c.ro?'readonly':''} ${c.dl?'list=dl-'+c.dl:''} ${c.t=='number'?'min=0':''}>`;return`<label class="${c.full||c.t=='area'?'full':''}">${c.l}${c.req?' *':''}${inp}</label>`}).join('')}</div>${dls}<div class=err id=er></div><div class=bar><span class=sp></span><button type=button id=cx>Cancel</button><button class=pri>Save record</button></div></form>`;
+$('#dlg').showModal();$('#cx').onclick=()=>$('#dlg').close();
+$('#fm').onsubmit=e=>{e.preventDefault();const r={};X.cols.forEach(c=>{const v=new FormData(e.target).get(c.k);r[c.k]=c.t=='number'?(v===''?'':+v):String(v).trim()});const er=check(m,r);if(er){$('#er').textContent=er;return}
+if(id)DB[m]=DB[m].map(x=>x.id==id?r:x);else DB[m].push(r);save();$('#dlg').close();draw(m);toast('Record saved')}}
+$('#file').onchange=e=>{const m=e.target.dataset.m,fl=e.target.files[0];e.target.value='';if(!fl)return;const rd=new FileReader();rd.onload=()=>{const t=parseCSV(rd.result),h=(t[0]||[]).map(x=>x.trim()),X=M[m];if(!X.cols.every(c=>h.includes(c.l))){toast('CSV headers do not match this module. Export a file first to see the format.');return}
+let ok=0,bad=0;t.slice(1).forEach(w=>{const r={};X.cols.forEach(c=>{const v=(w[h.indexOf(c.l)]||'').trim();r[c.k]=c.t=='number'?(v===''?'':+v):v});if(!r.id)r.id=nextId(m);if(check(m,r))bad++;else{const i=DB[m].findIndex(x=>x.id==r.id);i>=0?DB[m][i]=r:DB[m].push(r);ok++}});save();draw(m);toast(ok+' imported, '+bad+' skipped')};rd.readAsText(fl)};
+function defExtra(){const p=pareto(),tot=p.reduce((a,x)=>a+x.v,0),bt=by(DB.def,r=>r.batch,r=>N(r.qty)),bi=by(DB.prod,r=>r.batch,r=>N(r.inspected));
+$('#ex').innerHTML=`<div class="grid g2"><div class=card><h3>Defect Frequency Analysis</h3><div class=tw style="border:0"><table><tr><th>Defect</th><th>Qty</th><th>% of defects</th></tr>${p.map(x=>`<tr><td>${x.k}</td><td>${x.v}</td><td>${f1(x.p)}</td></tr>`).join('')}<tr><td><b>Total</b></td><td><b>${tot}</b></td><td></td></tr></table></div></div>
+<div class=card><h3>Batch Tracking</h3><div class=tw style="border:0"><table><tr><th>Batch</th><th>Defects</th><th>Inspected</th><th>Defect rate</th></tr>${Object.keys(bi).sort().map(b=>`<tr><td>${b}</td><td>${bt[b]||0}</td><td>${nf(bi[b])}</td><td>${f1(pct(bt[b]||0,bi[b]))}</td></tr>`).join('')}</table></div></div></div>
+<div class=card><h3>Defect Trend (units per day)</h3><div class=cv><canvas id=dt></canvas></div></div>`;
+const d=dates();chart('dt',{type:'line',data:{labels:d.map(x=>x.slice(5)),datasets:[{label:'Defects',data:d.map(x=>DB.def.filter(r=>r.date==x).reduce((a,r)=>a+N(r.qty),0)),borderColor:'#e8742a',backgroundColor:'#e8742a33',fill:true,tension:.3}]}})}
+function analysis(){const p=pareto(),k=K(),a=DB.an;
+const mt=[['Defect Rate','Total defect units ÷ inspected units × 100',f1(k.dr),'Share of inspected output with recorded defects.'],['Rejection Rate','Rejected units ÷ inspected units × 100',f1(k.rr),'Share of inspected units that failed acceptance.'],['First Pass Yield','Accepted units ÷ inspected units × 100',f1(k.fpy),'Units passing inspection the first time, without rework.'],['Inspection Coverage','Inspected units ÷ actual production × 100',f1(k.cov),'How much of the output was actually checked.'],['Production Achievement','Actual production ÷ target quantity × 100',f1(k.ach),'How closely output matched the plan.']];
+$('#view').innerHTML=`<div class=hd><h2>Quality Analysis</h2><p>Pareto, Fishbone, 5 Why and quality metrics.</p></div>
+<div class=card><h3>A. Pareto Analysis</h3><div class=cv><canvas id=pc></canvas></div><div class=tw style="margin-top:10px"><table><tr><th>Defect category</th><th>Frequency</th><th>Contribution</th><th>Cumulative</th></tr>${p.map(x=>`<tr><td>${x.k}</td><td>${x.v}</td><td>${f1(x.p)}</td><td>${f1(x.c)}</td></tr>`).join('')}</table></div></div><br>
+<div class=card><h3>B. Fishbone (Ishikawa) Analysis</h3><div class=eff>Effect: <input id=prob style="width:70%" value="${esc(a.prob)}"></div><div class=fish>${Object.keys(a.fish).map(x=>`<div><h4>${x}</h4><textarea data-fish="${x}">${esc(a.fish[x])}</textarea></div>`).join('')}</div></div><br>
+<div class=card><h3>C. 5 Why Analysis</h3><label>Problem<input id=wp style="width:100%" value="${esc(a.prob)}" disabled></label>${a.why.map((w,i)=>`<label>Why ${i+1}<textarea data-why=${i}>${esc(w)}</textarea></label>`).join('')}<label>Root cause conclusion<textarea id=cn>${esc(a.concl)}</textarea></label></div><br>
+<div class=card><h3>D. Quality Metrics</h3><div class=tw style="border:0"><table><tr><th>Metric</th><th>Formula</th><th>Value</th><th>Meaning</th></tr>${mt.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td><b>${r[2]}</b></td><td style="white-space:normal">${r[3]}</td></tr>`).join('')}</table></div></div>`;
+chart('pc',{data:{labels:p.map(x=>x.k),datasets:[{type:'bar',label:'Frequency',data:p.map(x=>x.v),backgroundColor:'#0f2a47',yAxisID:'y'},{type:'line',label:'Cumulative %',data:p.map(x=>+x.c.toFixed(1)),borderColor:'#e8742a',yAxisID:'y1'}]},options:{scales:{y:{beginAtZero:true},y1:{position:'right',min:0,max:100,grid:{drawOnChartArea:false}}}}});
+const sv=()=>{a.prob=$('#prob').value;a.concl=$('#cn').value;save()};$('#prob').oninput=e=>{$('#wp').value=e.target.value;sv()};$('#cn').oninput=sv;
+$$('[data-fish]').forEach(t=>t.oninput=()=>{a.fish[t.dataset.fish]=t.value;save()});$$('[data-why]').forEach(t=>t.oninput=()=>{a.why[t.dataset.why]=t.value;save()})}
+const REC={'Surface Defect':'Review polishing/cleaning steps and replace worn tooling.','Scratches':'Add protective liners and handling instructions between stations.','Dimensional Deviation':'Verify gauge calibration and machine setup before each batch.','Assembly Error':'Update work instructions and add a poka-yoke check.','Missing Components':'Add a component-count verification before closing the unit.','Packaging Defect':'Re-validate sealing parameters and packaging line settings.','Functional Failure':'Strengthen functional testing and trace failed units to their source.'};
+function report(){const k=K(),p=pareto(),bt=by(DB.def,r=>r.batch,r=>N(r.qty)),bi=by(DB.prod,r=>r.batch,r=>N(r.inspected)),worst=Object.keys(bi).sort((a,b)=>pct(bt[b]||0,bi[b])-pct(bt[a]||0,bi[a]))[0],st=by(DB.insp,r=>r.result,()=>1),cp=by(DB.capa,r=>r.status,()=>1),ds=dates();
+$('#view').innerHTML=`<div class="bar noprint"><button class=pri id=pr>Print / Save as PDF</button><span class=mut>Use the browser print dialog and choose “Save as PDF”.</span></div><div class=rep>
+<h2 style="margin-bottom:0;color:#0f2a47">Final Quality Report</h2><div class=mut>Manufacturing Quality Control Management System (MQCMS) · Prepared by Lidia Milenia P.M. · Generated ${TODAY}</div>
+<div class=warn style="margin-top:10px">All records are simulated data for educational and portfolio demonstration. They are not actual company experience or certified inspection results.</div>
+<h3>1. Production Summary</h3><p>Period ${ds[0]} to ${ds[ds.length-1]}: ${nf(k.actual)} units produced against a target of ${nf(k.target)} (${f1(k.ach)} achievement) across ${DB.prod.length} production records.</p>
+<h3>2. Inspection Summary</h3><p>${nf(k.insp)} units inspected (${f1(k.cov)} coverage): ${nf(k.acc)} accepted and ${nf(k.rej)} rejected. ${DB.insp.length} inspections logged: ${Object.entries(st).map(([a,b])=>b+' '+a).join(', ')}.</p>
+<h3>3. Defect Analysis</h3><div class=tw><table><tr><th>Defect</th><th>Qty</th><th>Contribution</th><th>Cumulative</th></tr>${p.map(x=>`<tr><td>${x.k}</td><td>${x.v}</td><td>${f1(x.p)}</td><td>${f1(x.c)}</td></tr>`).join('')}</table></div>
+<h3>4. Quality Metrics</h3><div class=tw><table><tr><th>Defect Rate</th><th>Rejection Rate</th><th>First Pass Yield</th><th>Inspection Coverage</th><th>Production Achievement</th></tr><tr><td>${f1(k.dr)}</td><td>${f1(k.rr)}</td><td>${f1(k.fpy)}</td><td>${f1(k.cov)}</td><td>${f1(k.ach)}</td></tr></table></div>
+<h3>5. Main Findings</h3><ul><li>Top defect: <b>${p[0]?p[0].k:'n/a'}</b> (${p[0]?f1(p[0].p):'0%'} of defects). ${p.length>1?'Top two categories together account for '+f1(p[1].c)+'.':''}</li><li>Batch with the highest defect rate: <b>${worst||'n/a'}</b> (${worst?f1(pct(bt[worst]||0,bi[worst])):'-'}).</li><li>CAPA status: ${Object.entries(cp).map(([a,b])=>b+' '+a).join(', ')||'none recorded'}.</li><li>Checklist: ${DB.chk.filter(c=>c.status=='Fail').length} failed item(s) out of ${DB.chk.length}.</li></ul>
+<h3>6. Corrective Action Recommendations</h3><ul>${p.slice(0,3).map(x=>`<li><b>${x.k}:</b> ${REC[x.k]}</li>`).join('')||'<li>No defects recorded.</li>'}</ul>
+<h3>7. Final Conclusion</h3><p>${k.fpy>=95?'Overall quality performance is acceptable':'Quality performance needs improvement'} with a first pass yield of ${f1(k.fpy)}. Priority should go to ${p[0]?p[0].k.toLowerCase():'continued monitoring'} and closing open CAPA items, then re-measuring after the next production cycle.</p></div>`;$('#pr').onclick=()=>window.print()}
+function data(){$('#view').innerHTML=`<div class=hd><h2>Data Management</h2><p>Data is stored in this browser (localStorage). Export CSV files open directly in Excel.</p></div><div class=card><h3>Export datasets</h3><div class=bar>${MK.map(m=>`<button data-x=${m}>${M[m].t}</button>`).join('')}</div></div><br><div class=card><h3>Reset</h3><div class=bar><button id=rs>Reset to sample data</button><button class=dng id=cl>Clear all data</button></div><p class=mut>Import CSV from each module page using “Import CSV”.</p></div>`;
+$$('[data-x]').forEach(b=>b.onclick=()=>{dl(b.dataset.x+'.csv',toCSV(b.dataset.x));toast('CSV exported')});
+$('#rs').onclick=()=>{if(confirm('Replace all data with the sample dataset?')){DB=seed();save();toast('Sample data restored')}};
+$('#cl').onclick=()=>{if(confirm('Delete ALL records? This cannot be undone.')){DB={prod:[],insp:[],def:[],chk:[],capa:[],an:DB.an};save();toast('All data cleared')}}}
+function about(){const L=a=>'<ul>'+a.map(x=>`<li>${x}</li>`).join('')+'</ul>';$('#view').innerHTML=`<div class=hd><h2>About Project</h2><p>Manufacturing Quality Control Management System (MQCMS) · Production Monitoring, Quality Inspection &amp; Defect Analysis</p></div>
+<div class=warn><b>Disclaimer:</b> This is an independent educational simulation, not an official company QC system. All data are simulated for portfolio demonstration and do not represent actual company experience or certified industrial inspection results.</div>
+<div class=card><p>Prepared by <b>Lidia Milenia P.M.</b> · Vocational High School Graduate – Software Engineering (RPL) · Simulated Manufacturing Quality Control Project</p>
+<h3>Project objectives</h3>${L(['Show how production, inspection and defect data connect in one quality workflow.','Practice calculating and interpreting standard quality metrics.','Demonstrate front-end development with vanilla JavaScript.'])}
+<h3>Manufacturing workflow</h3>${L(['Plan and produce a batch.','Inspect samples by category (visual, dimensional, functional, packaging, final).','Record accepted and rejected units and classify defects.','Analyse causes (Pareto, Fishbone, 5 Why).','Raise CAPA, verify results and report.'])}
+<h3>Quality control concepts</h3>${L(['Pareto principle: a few defect types cause most problems.','First Pass Yield: units right the first time.','CAPA: corrective actions fix found problems; preventive actions stop recurrence.'])}
+<h3>Technical implementation</h3><p>Single HTML file with CSS and vanilla JavaScript. Data is held in one shared object persisted in localStorage; every module reads from it, so edits update the dashboard, analysis and report automatically. Charts use Chart.js from a CDN.</p>
+<h3>Data simulation methodology</h3><p>A seeded pseudo-random generator creates 20 production records over 10 days with realistic ranges (88–102% of target, 85–100% inspected, 2–7% rejected). Defects are distributed using weighted categories, and defect quantity is set slightly above rejected units because one unit can have more than one defect.</p>
+<h3>Limitations</h3>${L(['Single user and single browser; no server or login.','Simulated data and simplified formulas.','Not validated against ISO 9001 or any company procedure.','Clearing browser data removes saved records.'])}
+<h3>Skills demonstrated</h3>${L(['CRUD, validation and CSV import/export','Data modelling and dynamic calculations','Dashboard design and charting','Quality tools and technical documentation'])}</div>`}
+const PG={dash:['Dashboard',dash],prod:['Production',()=>draw('prod')],insp:['Inspection',()=>draw('insp')],def:['Defect Tracking',()=>draw('def')],analysis:['Quality Analysis',analysis],chk:['QC Checklist',()=>draw('chk')],capa:['CAPA',()=>draw('capa')],report:['Final Report',report],data:['Data Management',data],about:['About Project',about]};
+$('#nav').innerHTML=Object.entries(PG).map(([k,v])=>`<a href="#${k}" data-k=${k}>${v[0]}</a>`).join('');
+function route(){const k=PG[location.hash.slice(1)]?location.hash.slice(1):'dash';$$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.k==k));$('#side').classList.remove('open');PG[k][1]();window.scrollTo(0,0)}
+$('#burger').onclick=()=>$('#side').classList.toggle('open');addEventListener('hashchange',route);route();
+</script></body></html>
